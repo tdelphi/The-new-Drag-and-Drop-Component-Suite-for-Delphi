@@ -131,14 +131,14 @@ type
     FHasSeeked: boolean;
   public
     function Stat(out statstg: TStatStg;
-      grfStatFlag: {$if CompilerVersion < 29}Longint{$else}DWORD{$endif}): HResult; override; stdcall;
-    function Seek(dlibMove: Largeint; dwOrigin: {$if CompilerVersion < 29}Longint{$else}DWORD{$endif};
-      out libNewPosition: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif}): HResult; override; stdcall;
-    function Read(pv: Pointer; cb: {$if CompilerVersion < 29}Longint{$else}FixedUInt{$endif};
-      pcbRead: {$if CompilerVersion < 29}PLongint{$else}PFixedUInt{$endif}): HResult; override; stdcall;
-    function CopyTo(stm: IStream; cb: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif};
-      out cbRead: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif};
-      out cbWritten: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif}): HResult; override; stdcall;
+      grfStatFlag: {$if CompilerVersion < 29}Longint{$else}DWORD{$ifend}): HResult; override; stdcall;
+    function Seek(dlibMove: Largeint; dwOrigin: {$if CompilerVersion < 29}Longint{$else}DWORD{$ifend};
+      out libNewPosition: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend}): HResult; override; stdcall;
+    function Read(pv: Pointer; cb: {$if CompilerVersion < 29}Longint{$else}FixedUInt{$ifend};
+      pcbRead: {$if CompilerVersion < 29}PLongint{$else}PFixedUInt{$ifend}): HResult; override; stdcall;
+    function CopyTo(stm: IStream; cb: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend};
+      out cbRead: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend};
+      out cbWritten: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend}): HResult; override; stdcall;
   end;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -908,31 +908,31 @@ end;
 //              TFixedStreamAdapter
 //
 ////////////////////////////////////////////////////////////////////////////////
-function TFixedStreamAdapter.Seek(dlibMove: Largeint; dwOrigin: {$if CompilerVersion < 29}Longint{$else}DWORD{$endif};
-  out libNewPosition: {$if CompilerVersion < 29}LargeInt{$else}LargeUInt{$endif}): HResult;
+function TFixedStreamAdapter.Seek(dlibMove: Largeint; dwOrigin: {$if CompilerVersion < 29}Longint{$else}DWORD{$ifend};
+  out libNewPosition: {$if CompilerVersion < 29}LargeInt{$else}LargeUInt{$ifend}): HResult;
 begin
   Result := inherited Seek(dlibMove, dwOrigin, libNewPosition);
   FHasSeeked := True;
 end;
 
 function TFixedStreamAdapter.Stat(out statstg: TStatStg;
-  grfStatFlag: {$if CompilerVersion < 29}Longint{$else}DWORD{$endif}): HResult;
+  grfStatFlag: {$if CompilerVersion < 29}Longint{$else}DWORD{$ifend}): HResult;
 begin
   Result := inherited Stat(statstg, grfStatFlag);
   statstg.pwcsName := nil;
 end;
 
-function TFixedStreamAdapter.Read(pv: Pointer; cb: {$if CompilerVersion < 29}Longint{$else}FixedUInt{$endif};
-  pcbRead: {$if CompilerVersion < 29}PLongint{$else}PFixedUInt{$endif}): HResult;
+function TFixedStreamAdapter.Read(pv: Pointer; cb: {$if CompilerVersion < 29}Longint{$else}FixedUInt{$ifend};
+  pcbRead: {$if CompilerVersion < 29}PLongint{$else}PFixedUInt{$ifend}): HResult;
 begin
   if (not FHasSeeked) then
-    Seek(0, STREAM_SEEK_SET, {$if CompilerVersion < 29}PLargeint{$else}PLargeUInt{$endif}(nil)^);
+    Seek(0, STREAM_SEEK_SET, {$if CompilerVersion < 29}PLargeint{$else}PLargeUInt{$ifend}(nil)^);
   Result := inherited Read(pv, cb, pcbRead);
 end;
 
-function TFixedStreamAdapter.CopyTo(stm: IStream; cb: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif};
-  out cbRead: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif};
-  out cbWritten: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$endif}): HResult;
+function TFixedStreamAdapter.CopyTo(stm: IStream; cb: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend};
+  out cbRead: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend};
+  out cbWritten: {$if CompilerVersion < 29}Largeint{$else}LargeUInt{$ifend}): HResult;
 const
   MaxBufSize = 1024 * 1024;  // 1mb
 var
@@ -940,7 +940,7 @@ var
   BufSize, BurstReadSize, BurstWriteSize: Integer;
   BytesRead    : LongInt;
   BytesWritten : LongInt;
-  BurstWritten : {$if CompilerVersion < 29}LongInt{$else}FixedUInt{$endif};
+  BurstWritten : {$if CompilerVersion < 29}LongInt{$else}FixedUInt{$ifend};
 begin
   Result := S_OK;
   BytesRead := 0;
@@ -1061,7 +1061,7 @@ var
   Buffer: pointer;
   Stream: IStream;
   Remaining: longInt;
-  Chunk: {$if CompilerVersion < 29}LongInt{$else}FixedUInt{$endif};
+  Chunk: {$if CompilerVersion < 29}LongInt{$else}FixedUInt{$ifend};
   pChunk: PByte;
   HGlob: HGLOBAL;
   ChunkBuffer: pointer;
@@ -1092,7 +1092,7 @@ begin
         Stream := IStream(AMedium.stm);
         if (Stream <> nil) then
         begin
-          Stream.Seek(0, STREAM_SEEK_SET, {$if CompilerVersion < 29}PLargeInt{$else}PUInt64{$endif}(nil)^);
+          Stream.Seek(0, STREAM_SEEK_SET, {$if CompilerVersion < 29}PLargeInt{$else}PUInt64{$ifend}(nil)^);
           Result := True;
           Remaining := Size;
           pChunk := Buffer;
@@ -1162,7 +1162,7 @@ var
   Stream: IStream;
   p: pointer;
   Remaining: longInt;
-  Chunk: {$if CompilerVersion < 29}LongInt{$else}FixedUInt{$endif};
+  Chunk: {$if CompilerVersion < 29}LongInt{$else}FixedUInt{$ifend};
 begin
   Result := (Buffer <> nil) and (Size > 0);
   if (Result) then
@@ -1185,7 +1185,7 @@ begin
       Stream := IStream(AMedium.stm);
       if (Stream <> nil) then
       begin
-        Stream.Seek(0, STREAM_SEEK_SET, {$if CompilerVersion < 29}PLargeInt{$else}PUInt64{$endif}(nil)^);
+        Stream.Seek(0, STREAM_SEEK_SET, {$if CompilerVersion < 29}PLargeInt{$else}PUInt64{$ifend}(nil)^);
         Remaining := Size;
         while (Result) and (Remaining > 0) do
         begin
@@ -1272,7 +1272,7 @@ begin
         exit;
       end;
 
-      Stream.Seek(0, STREAM_SEEK_END, {$if CompilerVersion < 29}PLargeInt{$else}PUInt64{$endif}(nil)^);
+      Stream.Seek(0, STREAM_SEEK_END, {$if CompilerVersion < 29}PLargeInt{$else}PUInt64{$ifend}(nil)^);
 
       (*
       ** The following is a bit weird...

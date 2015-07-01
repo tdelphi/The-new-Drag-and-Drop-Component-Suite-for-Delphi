@@ -93,7 +93,7 @@ type
 {$IF CompilerVersion < 14.0}
 {$hppemit '// Hack to trick C++Builder 4/5 into using a default value for the Unregister methods parameter' }
 {$hppemit '#define ATarget_with_default ATarget = NULL' }
-{$endif}
+{$ifend}
 {$endif}
   TCustomDropTarget = class(TDragDropComponent, IDropTarget)
   private
